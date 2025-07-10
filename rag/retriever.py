@@ -1,28 +1,25 @@
 import streamlit as st
+import numpy as np
+import faiss
 from openai import OpenAI
-from openai.error import OpenAIError
-from config import OPENAI_API_KEY, CHAT_MODEL
+from openai import OpenAIError
 
-# inicializa cliente OpenAI
-client = OpenAI(api_key=OPENAI_API_KEY)
+import config
+from rag.embeddings import init_vector_store
+
+client = OpenAI(api_key=config.OPENAI_API_KEY)
 
 @st.cache_resource
-async def correct_text(user_text: str, system_context: str) -> str:
-    """
-    Envia prompt ao modelo de chat da OpenAI para correção e feedback de redação.
-
-    monta um prompt com system + user e retorna o conteúdo da resposta.
-    """
-    messages = [
-        {"role": "system", "content": f"Você é um tutor de redação do ENEM. Considere o seguinte contexto:\n{system_context}"},
-        {"role": "user", "content": f"Por favor, corrija, avalie e forneça feedback detalhado para esta redação: Ola tudo bem? \n{user_text}"}
-    ]
+def retrieve_context(user_text: str, k: int = config.K_NEIGHBORS) -> str:
+    df_rubric, index = init_vector_store()
     try:
-        response = client.chat.completions.create(
-            model=CHAT_MODEL,
-            messages=messages
-        )
-        return response.choices[0].message.content
+        res = client.embeddings.create(input=user_text, model=config.EMBEDDING_MODEL)
+        emb = np.array(res["data"][0]["embedding"], dtype="float32")
+        faiss.normalize_L2(emb)
     except OpenAIError as e:
-        st.error(f"Erro na API de chat: {e}")
-        return ""  
+        st.error(f"Erro ao gerar embedding do usuário: {e}")
+        return ""
+
+    _, I = index.search(np.array([emb]), k)
+    contexts = df_rubric.iloc[I[0]]["criteria"].tolist()
+    return "\n".join(contexts)

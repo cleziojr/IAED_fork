@@ -4,7 +4,7 @@ from .file_loader import (
     load_uploaded_file,
     get_user_text,
 )
-from .metrics import (
+from .metrics     import (
     count_words,
     count_sentences,
     average_sentence_length,
@@ -13,6 +13,7 @@ from .metrics import (
     grammar_error_count,
     collect_metrics,
 )
+from .logger      import get_logger
 
 __all__ = [
     "load_text_file",
@@ -26,4 +27,5 @@ __all__ = [
     "flesch_reading_ease",
     "grammar_error_count",
     "collect_metrics",
+    "get_logger",
 ]
