@@ -74,19 +74,19 @@ def render_dashboard(chat_history: list[dict]) -> None:
     with tab_resumo:
         st.subheader("Resumo Automático para o Professor")
 
-        medias_competencias = df[["nota_c1", "nota_c2", "nota_c3", "nota_c4", "nota_c5"]].mean()
-        pior_competencias = medias_competencias.nsmallest(2)
-        melhor_competencia = medias_competencias.idxmax()
-        melhor_media = medias_competencias.max()
+        soma_competencias = row.df[["nota_c1", "nota_c2", "nota_c3", "nota_c4", "nota_c5"]].sum()
+        pior_competencias = soma_competencias.nsmallest(1)
+        melhor_competencia = soma_competencias.idxmax()
+        melhor_media = soma_competencias.max()
 
         st.markdown(f"""
         ✅ **Competência de Destaque:**  
-        Parabéns, sua turma está apresentando melhor desempenho na **{melhor_competencia}**, com média de {melhor_media:.2f}.
+        Parabéns, sua turma está apresentando melhor desempenho na **{melhor_competencia}**, com média de {melhor_media}.
 
         ⚠️ **Competências que Precisam de Atenção:**  
         Sua turma demonstra mais dificuldade em:
-        - **{pior_competencias.index[0]}**, com média de {pior_competencias.values[0]:.2f}  
-        - **{pior_competencias.index[1]}**, com média de {pior_competencias.values[1]:.2f}
+        - **{pior_competencias.index[0]}**, com média de {pior_competencias.values[0]}  
+        - **{pior_competencias.index[1]}**, com média de {pior_competencias.values[1]}
 
         Recomendamos focar reforços e atividades nessas competências para melhorar o desempenho coletivo.
         """)
