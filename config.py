@@ -15,5 +15,5 @@ EMBEDDING_MODEL = "text-embedding-ada-002"
 CHAT_MODEL     = "gpt-4o-mini"
 
 # caminhos e constantes
-RUBRIC_CSV_PATH = "data/rubric.csv"
+RUBRIC_CSV_PATH = r"data/rubric.csv"
 K_NEIGHBORS     = 3
