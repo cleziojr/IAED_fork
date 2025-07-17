@@ -45,7 +45,7 @@ Além disso, informe as seguintes métricas:
 Retorne **apenas** um JSON no formato:
 
 {
-  "nota_final": valor,
+  "nota_final": c1 + c2 + c3 +c 4 + c5,
   "nota_c1": valor,
   "nota_c2": valor,
   "nota_c3": valor,
