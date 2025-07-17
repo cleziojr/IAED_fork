@@ -72,24 +72,35 @@ def render_dashboard(chat_history: list[dict]) -> None:
         """)
 
     with tab_resumo:
-        st.subheader("Resumo Automático para o Professor")
+       st.subheader("Resumo Automático para o Professor")
 
-        soma_competencias = row.df[["nota_c1", "nota_c2", "nota_c3", "nota_c4", "nota_c5"]].sum()
-        pior_competencias = soma_competencias.nsmallest(1)
-        melhor_competencia = soma_competencias.idxmax()
-        melhor_media = soma_competencias.max()
+    cols_comp = [f"nota_c{i}" for i in range(1, 6)]
+    soma_competencias = df[cols_comp].sum()
+    # pega as 2 piores, não apenas 1
+    pior_competencias = soma_competencias.nsmallest(2)
+    melhor_competencia = soma_competencias.idxmax()
+    melhor_media = soma_competencias.max()
 
-        st.markdown(f"""
-        ✅ **Competência de Destaque:**  
-        Parabéns, sua turma está apresentando melhor desempenho na **{melhor_competencia}**, com média de {melhor_media}.
+    # monta o texto das piores competências
+    if len(pior_competencias) >= 2:
+        texto_piores = (
+            f"- **{pior_competencias.index[0]}**, com média de {pior_competencias.values[0]}\n"
+            f"- **{pior_competencias.index[1]}**, com média de {pior_competencias.values[1]}"
+        )
+    else:
+        # fallback caso só haja um elemento por algum motivo
+        texto_piores = f"- **{pior_competencias.index[0]}**, com média de {pior_competencias.values[0]}"
 
-        ⚠️ **Competências que Precisam de Atenção:**  
-        Sua turma demonstra mais dificuldade em:
-        - **{pior_competencias.index[0]}**, com média de {pior_competencias.values[0]}  
-        - **{pior_competencias.index[1]}**, com média de {pior_competencias.values[1]}
+    st.markdown(f"""
+    ✅ **Competência de Destaque:**  
+    Parabéns, sua turma está apresentando melhor desempenho na **{melhor_competencia}**, com soma de {melhor_media}.
 
-        Recomendamos focar reforços e atividades nessas competências para melhorar o desempenho coletivo.
-        """)
+    ⚠️ **Competências que Precisam de Atenção:**  
+    Sua turma demonstra mais dificuldade em:  
+    {texto_piores}
+
+    Recomendamos focar reforços e atividades nessas competências para melhorar o desempenho coletivo.
+    """)
 
     with tab_legenda:
         st.subheader("Legenda das Métricas")
