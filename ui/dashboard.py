@@ -45,7 +45,7 @@ def render_dashboard(chat_history: list[dict]) -> None:
         """)
 
         if "Interação" in df.columns:
-            st.subheader("Média da Nota Final ao Longo das Interações")
+            st.subheader("Evolução da Nota Final ao Longo das Interações")
             media_por_interacao = df.groupby("Interação")["nota_final"].mean().reset_index()
             fig_media = px.line(
                 media_por_interacao,
@@ -53,7 +53,7 @@ def render_dashboard(chat_history: list[dict]) -> None:
                 y="nota_final",
                 markers=True,
                 labels={"nota_final": "Média da Nota Final", "Interação": "Interação"},
-                title="Evolução da Média da Nota Final na Turma"
+                title="Evolução da Nota Final na Turma"
             )
             st.plotly_chart(fig_media, use_container_width=True)
             st.markdown("""
